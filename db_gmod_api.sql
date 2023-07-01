@@ -40,7 +40,7 @@ CREATE TABLE `counter` (
 --
 
 INSERT INTO `counter` (`id`, `code`, `data`, `count_max`, `count`) VALUES
-(1, 'test', '[\"caps\",10000,0]', 9, 1);
+(1, 'test', '[[\"caps\",10000,0]]', 9, 1);
 
 --
 -- Indexes for dumped tables

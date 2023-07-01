@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Counter extends CI_Controller
+class Promocode extends CI_Controller
 {
 
     public function __construct()
@@ -9,9 +9,13 @@ class Counter extends CI_Controller
         parent::__construct();
 
         //load model
-        $this->load->model('M_counter');
+        $this->load->model('M_promocode');
 
         $this->load->library('secure');
+        $this->load->library('aes256');
+
+        //load library form validasi
+        $this->load->library('form_validation');
     }
 
     /**
@@ -27,7 +31,7 @@ class Counter extends CI_Controller
                 'code'      => $request_data['code']
             );
 
-            $simpan = $this->M_counter->insert($data);
+            $simpan = $this->M_promocode->insert($data);
 
             if ($simpan) {
 
@@ -62,29 +66,31 @@ class Counter extends CI_Controller
 
     public function encrypt_request()
     {
-        $request_data = json_decode(file_get_contents('php://input'), true);
+        $output = $this->aes256->encrypt($this->input->post("data"));
         header('Content-Type: application/json');
-        echo json_encode(
-            array(
-                'success' => true,
-                'message' => 'Data Berhasil ditemukan!',
-                'data' => $this->secure->encrypt_url(json_encode($request_data))
-            )
-        );
+        echo $output;
+    }
+
+    public function decrypt_request()
+    {
+        $output = $this->aes256->decrypt($this->input->post("data"));
+        header('Content-Type: application/json');
+        echo $output;
     }
 
     public function get_by_code()
     {
-        $request_data = json_decode(file_get_contents('php://input'), true);
-        
-        if ($request_data != NULL) {
-            $decrypt_data = json_decode($this->secure->decrypt_url($request_data['data']));
+        $this->form_validation->set_rules('data', 'Data', 'required');
 
-            $row = $this->M_counter->get_by_code($decrypt_data->code);
+        if ($this->form_validation->run() == TRUE) {
+            $decrypt_data = json_decode($this->aes256->decrypt($this->input->post("data")));
 
+            $result = $this->M_promocode->get_by_code($decrypt_data->code);
+            $row = $result['row'];
+            $totalRows = $result['totalRows'];
             if ($row) {
-                if ($row->count_max >= 10) {
-                    header('Content-Type: application/json');
+                if ($row->count_max > 10) {
+                    // header('Content-Type: application/json');
                     echo json_encode(
                         array(
                             'success' => false,
@@ -93,29 +99,33 @@ class Counter extends CI_Controller
                         )
                     );
                 } else {
-                    header('Content-Type: application/json');
-                    echo json_encode(
-                        array(
-                            'success' => true,
-                            'message' => 'Data Berhasil ditemukan!',
-                            'data' => $this->secure->encrypt_url(json_encode($row))
-                        )
+
+                    $data = array(
+                        "data" => array(
+                            "present" => $row->data
+                        ),
+                        "result" => intval($totalRows)
                     );
+
+                    $jsonString = json_encode($data);
+                    $output = $this->aes256->encrypt($jsonString);
+                    // header('Content-Type: application/json');
+                    echo $output;
                 }
             } else {
 
-                header('Content-Type: application/json');
+                // header('Content-Type: application/json');
                 echo json_encode(
                     array(
                         'success' => false,
                         'message' => 'Data Gagal ditemukan!',
-                        'data' => $row
+                        'data' => null
                     )
                 );
             }
         } else {
 
-            header('Content-Type: application/json');
+            // header('Content-Type: application/json');
             echo json_encode(
                 array(
                     'success'    => false,
