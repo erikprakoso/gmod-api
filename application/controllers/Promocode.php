@@ -94,7 +94,7 @@ class Promocode extends CI_Controller
                     echo json_encode(
                         array(
                             'success' => false,
-                            'message' => 'Data not found',
+                            'message' => 'Code has reached the limit',
                             'data' => null
                         )
                     );
