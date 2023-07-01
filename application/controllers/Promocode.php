@@ -78,7 +78,7 @@ class Promocode extends CI_Controller
         echo $output;
     }
 
-    public function get_by_code()
+    public function v1()
     {
         $this->form_validation->set_rules('data', 'Data', 'required');
 
@@ -89,17 +89,20 @@ class Promocode extends CI_Controller
             $row = $result['row'];
             $totalRows = $result['totalRows'];
             if ($row) {
-                if ($row->count_max > 10) {
+                if ($row->count > $row->count_max || $row->count == $row->count_max ) {
                     // header('Content-Type: application/json');
                     echo json_encode(
                         array(
                             'success' => false,
-                            'message' => 'Data lebih dari 10 kali!',
+                            'message' => 'Data not found',
                             'data' => null
                         )
                     );
                 } else {
-
+                    $data = array(
+                        'count' => intval($row->count) + 1
+                    );
+                    $this->M_promocode->update_by_id($row->id, $data);
                     $data = array(
                         "data" => array(
                             "present" => $row->data
@@ -118,7 +121,7 @@ class Promocode extends CI_Controller
                 echo json_encode(
                     array(
                         'success' => false,
-                        'message' => 'Data Gagal ditemukan!',
+                        'message' => 'Data not found',
                         'data' => null
                     )
                 );

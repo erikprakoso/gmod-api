@@ -31,4 +31,10 @@ class M_promocode extends CI_Model
 
         return $result;
     }
+
+    public function update_by_id($id, $data)
+    {
+        $this->db->where('id', $id);
+        $this->db->update('promocode', $data);
+    }
 }

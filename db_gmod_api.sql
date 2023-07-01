@@ -24,10 +24,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `counter`
+-- Table structure for table `promocode`
 --
 
-CREATE TABLE `counter` (
+CREATE TABLE `promocode` (
   `id` int(11) NOT NULL,
   `code` varchar(100) DEFAULT NULL,
   `data` varchar(100) DEFAULT NULL,
@@ -36,10 +36,10 @@ CREATE TABLE `counter` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `counter`
+-- Dumping data for table `promocode`
 --
 
-INSERT INTO `counter` (`id`, `code`, `data`, `count_max`, `count`) VALUES
+INSERT INTO `promocode` (`id`, `code`, `data`, `count_max`, `count`) VALUES
 (1, 'test', '[[\"caps\",10000,0]]', 9, 1);
 
 --
@@ -47,9 +47,9 @@ INSERT INTO `counter` (`id`, `code`, `data`, `count_max`, `count`) VALUES
 --
 
 --
--- Indexes for table `counter`
+-- Indexes for table `promocode`
 --
-ALTER TABLE `counter`
+ALTER TABLE `promocode`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -57,9 +57,9 @@ ALTER TABLE `counter`
 --
 
 --
--- AUTO_INCREMENT for table `counter`
+-- AUTO_INCREMENT for table `promocode`
 --
-ALTER TABLE `counter`
+ALTER TABLE `promocode`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
